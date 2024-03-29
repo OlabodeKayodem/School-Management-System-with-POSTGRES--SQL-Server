@@ -1,0 +1,143 @@
+-- Step 1: Create a database named SchoolManagementSystem in PostgreSQL.
+
+CREATE DATABASE "SchoolManagementSystem"
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LOCALE_PROVIDER = 'libc'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+-- Step 2: Design and create tables to store student information (Students), course details (Courses), and student enrollment data (Enrollment: EnrollmentID, StudentID, CourseID). Establish relationships between these tables using foreign keys.
+
+-- Step 3: Create a table to store student information (Student_ID, Student_Name, Student_Class)
+
+CREATE TABLE Students (
+    Student_ID SERIAL PRIMARY KEY,
+    Student_Name VARCHAR(255),
+    Student_Class VARCHAR(255)
+);
+
+-- Step 4: Create a table to store course information (Course_ID, Course_Code, Course_Name, Course_Instructor)
+
+CREATE TABLE Courses (
+    Course_ID SERIAL PRIMARY KEY,
+    Course_Code VARCHAR(255),
+    Course_Name VARCHAR(255),
+    Course_Instructor VARCHAR(255)
+);
+
+-- Step 5: Create a table to store enrollment information (Enrollment_ID, Student_ID, Course_ID)
+
+CREATE TABLE Enrollment (
+    Enrollment_ID SERIAL PRIMARY KEY,
+    Student_ID INT REFERENCES Students(Student_ID),
+    Course_ID INT REFERENCES Courses(Course_ID)
+);
+
+-- Step 6: Populate the tables with sample data: 10 students, 4 courses, and enroll them in courses.
+
+INSERT INTO Courses (
+    Course_Name,
+    Course_Code,
+    Course_Instructor
+) VALUES
+('English', 'ENG 101', 'Mrs. Chioma'),
+('Mathematics', 'MATH 101', 'Mr. John'),
+('Business Studies', 'BUS 101', 'Mr. Adekunle'),
+('Basic Science', 'BAS 101', 'Mrs. Abdulganuiyu');
+
+INSERT INTO Students (
+    Student_Name, 
+    Student_Class
+) VALUES
+('Olabode Kayode', 'J.S.S.1'),
+('Abiodun Martins', 'J.S.S.2'),
+('Olatunde Jeremiah', 'J.S.S.3'),
+('Bode Thomas', 'J.S.S.3'),
+('Tunde Willaims', 'J.S.S.1'),
+('Tunde Kayode', 'J.S.S.2'),
+('Abiodun Thomas', 'J.S.S.2'),
+('Olatunde Martins', 'J.S.S.1'),
+('Bode Jeremiah', 'J.S.S.2'),
+('Olabode Willaims', 'J.S.S.3');
+
+INSERT INTO Enrollment (Student_ID, Course_ID) VALUES
+(1, 2),  
+(2, 3),  
+(3, 1), 
+(4, 4),
+(5, 1), 
+(6, 2),
+(7, 3),
+(8, 1),  
+(9, 4), 
+(10, 2);
+
+-- Step 7: Simulate updates by modifying student information (e.g., name change) and course removal.
+
+UPDATE Students SET Student_Name = 'Abbey Martins' WHERE Student_ID = 2;
+
+-- Step 8: Delete enrollment records associated with a specific course (e.g., Mathematics)
+
+DELETE FROM Enrollment WHERE Course_ID = (SELECT Course_ID FROM Courses WHERE Course_Name = 'Mathematics');
+
+-- Step 9: Now, delete the course
+
+DELETE FROM Courses WHERE Course_Name = 'Mathematics';
+
+SELECT * FROM courses -- to check if mathematics have been deleted
+
+-- Step 10: List all students by student Id
+
+SELECT * FROM Students ORDER BY Student_ID;
+
+-- Step 11: Filter students based on Student_Class.
+
+SELECT * FROM Students WHERE Student_Class = 'J.S.S.1';
+SELECT * FROM Students WHERE Student_Class IN ('J.S.S.3', 'J.S.S.2'); -- To select more than a Single class
+
+
+-- Step 12: List courses along with the number of enrolled students per course with the instructors (use aggregate functions like COUNT and GROUP BY).
+
+SELECT
+    c.Course_Name,
+    c.Course_Instructor,
+    COUNT(e.Student_ID) AS Num_Enrolled_Students
+FROM
+    Courses c
+LEFT JOIN
+    Enrollment e ON c.Course_ID = e.Course_ID
+GROUP BY
+    c.Course_Name,
+    c.Course_Instructor;
+
+-- List courses along with the number of enrolled students per course without the instructors (use aggregate functions like COUNT and GROUP BY).
+
+
+SELECT
+    c.Course_Name,
+   
+    COUNT(e.Student_ID) AS Num_Enrolled_Students
+FROM
+    Courses c
+LEFT JOIN
+    Enrollment e ON c.Course_ID = e.Course_ID
+GROUP BY
+    c.Course_Name;
+ 
+
+-- Step 13: Find students enrolled in a specific course (e.g., English)
+
+SELECT
+    s.Student_ID,
+    s.Student_Name,
+    s.Student_Class
+FROM
+    Students s
+JOIN
+    Enrollment e ON s.Student_ID = e.Student_ID
+JOIN
+    Courses c ON e.Course_ID = c.Course_ID
+WHERE
+    c.Course_Name = 'English';
