@@ -81,4 +81,4 @@ Through diligent execution of these steps, I successfully orchestrated the creat
 
 ## Source Code:
 
-The source code for the PostgreSQL scripts and database creation will be available on GitHub. You can find the repository at [here](Olabode%20Kayode%20School-Management-DB/blob/main/Codes/School%20Management%20System%20with%20POSTGRES%20-%20SQL%20Server.sql).
+The source code for the PostgreSQL scripts and database creation will be available on GitHub. You can find the repository at [here](School%20Management%20DB/Codes/School%20Management%20System%20with%20POSTGRES%20-%20SQL%20Server.sql)
